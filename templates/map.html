@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта этажа {{ floor }}</title>
+    <style>
+        /* Стили для карты */
+        #map-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/static/images/floor_{{ floor }}.png') no-repeat center center;
+            background-size: contain;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: top left;
+        }
+
+        /* Стили для маркеров */
+        .marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid black;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Стили для информационного окна */
+        .info-window {
+            position: absolute;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+
+        /* Стили для кнопки добавления маркеров */
+        #add-marker-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Стили для формы добавления маркера */
+        #add-marker-form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+
+        /* Стили для кнопки "Скачать карту" */
+        #download-map-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <!-- Кнопка добавления маркеров -->
+    <button id="add-marker-btn">Добавить маркер</button>
+
+    <!-- Форма добавления маркера -->
+    <form id="add-marker-form">
+        <label for="x">X:</label>
+        <input type="number" id="x" name="x" required>
+        <label for="y">Y:</label>
+        <input type="number" id="y" name="y" required>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <!-- Кнопка "Скачать карту" -->
+    <button id="download-map-btn">Скачать карту</button>
+
+    <!-- Карта -->
+    <div id="map-container">
+        <div id="map">
+            {% for marker in markers %}
+                <div class="marker" style="top: {{ marker.y }}px; left: {{ marker.x }}px;" data-info="{{ marker.info }}">i</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Информационное окно -->
+    <div class="info-window" id="info-window">
+        <p id="info-text"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = document.getElementById('map');
+            var addMarkerBtn = document.getElementById('add-marker-btn');
+            var addMarkerForm = document.getElementById('add-marker-form');
+            var downloadMapBtn = document.getElementById('download-map-btn');
+            var isDragging = false;
+            var startX, startY, translateX, translateY, scale = 1;
+
+             // Обработчик клика на кнопку добавления маркера
+             addMarkerBtn.addEventListener('click', function() {
+                addMarkerForm.style.display = 'block';
+            });
+
+            // Обработчик отправки формы добавления маркера
+            addMarkerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var x = document.getElementById('x').value;
+                var y = document.getElementById('y').value;
+                var marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.style.top = y + 'px';
+                marker.style.left = x + 'px';
+                map.appendChild(marker);
+                addMarkerForm.reset();
+                addMarkerForm.style.display = 'none';
+            });
+
+            // Обработчик клика на карту для скрытия формы добавления маркера
+            map.addEventListener('click', function() {
+                addMarkerForm.style.display = 'none';
+            });
+
+            // Обработчик нажатия на кнопку "Скачать карту"
+            downloadMapBtn.addEventListener('click', function() {
+                var imageUrl = '/static/images/floor_{{ floor }}.png'; // Путь к изображению карты
+                var link = document.createElement('a');
+                link.href = imageUrl;
+                link.download = 'map_floor_{{ floor }}.png'; // Имя файла для скачивания
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+
+            // Обработчики перемещения и масштабирования карты
+            // ...
+        });
+    </script>
+</body>
+</html>

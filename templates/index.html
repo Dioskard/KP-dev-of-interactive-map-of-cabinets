@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивная карта 8 корпуса ОмГТУ</title>
+</head>
+<body>
+    <h1>Интерактивная карта 8 корпуса ОмГТУ</h1>
+    <form id="floor-form">
+        <label for="floor-select">Выберите этаж:</label>
+        <select id="floor-select" name="floor">
+            <option value="2">Этаж 2</option>
+            <option value="3">Этаж 3</option>
+            <option value="4">Этаж 4</option>
+            <!-- Добавить больше этажей по мере необходимости -->
+        </select>
+        <button type="submit">Перейти</button>
+    </form>
+
+    <script>
+        document.getElementById('floor-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var floor = document.getElementById('floor-select').value;
+            window.location.href = '/map/' + floor;
+        });
+    </script>
+</body>
+</html>
